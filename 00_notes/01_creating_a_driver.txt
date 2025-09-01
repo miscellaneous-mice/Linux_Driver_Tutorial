@@ -12,3 +12,8 @@ Create a exit module :
 	-> To clean stop the driver execution
 	-> Use module_exit(my_exit) to stop the driver
 
+To load the module into linux system
+-> create a makefile to compile code into a loadable module (.ko file)
+-> Monitor logs -> sudo dmesg -W
+-> Load the module -> sudo insmod {filename.ko}
+-> Remove the module -> sudo rmmod {filename.ko}
