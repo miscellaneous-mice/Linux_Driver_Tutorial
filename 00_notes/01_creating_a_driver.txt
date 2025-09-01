@@ -1,0 +1,14 @@
+Includes these header files : 
+#include <linux/mod.h> // Used to get the linux system modules
+#include <linux/init.h> // Used to get the linux init modules
+
+Create a init module :
+	-> It should return
+		-> 0 -> the module of loaded successfully
+		-> -ve flag (number) -> Issue while loading the module
+	-> Use module_init(my_init) to initialize the driver
+
+Create a exit module : 
+	-> To clean stop the driver execution
+	-> Use module_exit(my_exit) to stop the driver
+
