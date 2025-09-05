@@ -1,8 +1,12 @@
+```
 ssh pi@raspberrypi.local 
+```
 
+```
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get install {package_name}
+```
 
 TMUX : 
 - ctrl + b shift + 5 -> Split terminal vertically

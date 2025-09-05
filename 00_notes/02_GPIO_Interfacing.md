@@ -1,0 +1,1 @@
+- To see all the GPIO interfaces : gpiodetect
