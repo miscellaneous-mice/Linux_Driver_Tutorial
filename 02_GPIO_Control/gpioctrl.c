@@ -3,9 +3,11 @@
 #include <linux/gpio/consumer.h>
 #include <linux/delay.h>
 #include <linux/kthread.h>
+#include <linux/gpio.h>
 
 static struct gpio_desc *led;
 static struct task_struct *blink_thread;
+
 
 static int blink_fn(void *arg)
 {
@@ -22,7 +24,8 @@ static int __init my_init(void)
 {
     int status;
 
-    led = gpiod_get(NULL, "led", GPIOD_OUT_LOW);  // "led" must be defined in DT overlay
+    // led = gpiod_get(NULL, "led", GPIOD_OUT_LOW);  // "led" must be defined in DT overlay
+    led = gpio_to_desc(21);
     if (IS_ERR(led)) {
         pr_err("Failed to get LED GPIO\n");
         return PTR_ERR(led);

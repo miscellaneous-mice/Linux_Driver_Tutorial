@@ -185,6 +185,10 @@
   },
   "active": "a268b1f0a9f77c90",
   "lastOpenFiles": [
+    "03_Device_Files/ch_dev_file/main_ch_dev.c",
+    "03_Device_Files/ch_dev_file/Makefile",
+    "03_Device_Files/ch_dev_file",
+    "03_Device_Files",
     "References.md",
     "00_notes/03_Device_Files.md",
     "00_notes/00_Booting.md",
