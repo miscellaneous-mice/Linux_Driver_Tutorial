@@ -1,58 +1,56 @@
-
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/gpio/consumer.h>
+#include <linux/delay.h>
+#include <linux/kthread.h>
+#include <linux/gpio.h>
 
-static struct gpio_desc *led, *button;
+static struct gpio_desc *led;
+static struct task_struct *blink_thread;
 
-#define IO_LED 21
-#define IO_BUTTON 20
 
-#define IO_OFFSET 0
+static int blink_fn(void *arg)
+{
+    while (!kthread_should_stop()) {
+        gpiod_set_value(led, 1);
+        msleep(500);
+        gpiod_set_value(led, 0);
+        msleep(500);
+    }
+    return 0;
+}
 
 static int __init my_init(void)
 {
-	int status;
+    int status;
 
-	led = gpio_to_desc(IO_LED + IO_OFFSET);
-	if (!led) {
-		printk("gpioctrl - Error getting pin 21\n");
-		return -ENODEV;
-	}
+    // led = gpiod_get(NULL, "led", GPIOD_OUT_LOW);  // "led" must be defined in DT overlay
+    led = gpio_to_desc(21);
+    if (IS_ERR(led)) {
+        pr_err("Failed to get LED GPIO\n");
+        return PTR_ERR(led);
+    }
 
-	button = gpio_to_desc(IO_BUTTON + IO_OFFSET);
-	if (!button) {
-		printk("gpioctrl - Error getting pin 20\n");
-		return -ENODEV;
-	}
+    blink_thread = kthread_run(blink_fn, NULL, "blink_thread");
+    if (IS_ERR(blink_thread)) {
+        pr_err("Failed to start blink thread\n");
+        gpiod_put(led);
+        return PTR_ERR(blink_thread);
+    }
 
-	status = gpiod_direction_output(led, 0);
-	if (status) {
-		printk("gpioctrl - Error setting pin 20 to output\n");
-		return status;
-	}
-
-	status = gpiod_direction_input(button);
-	if (status) {
-		printk("gpioctrl - Error setting pin 21 to input\n");
-		return status;
-	}
-
-	gpiod_set_value(led, 1);
-
-	printk("gpioctrl - Button is %spressed\n", gpiod_get_value(button) ? "" : "not ");
-
-	return 0;
+    pr_info("LED blink module loaded\n");
+    return 0;
 }
 
 static void __exit my_exit(void)
 {
-	gpiod_set_value(led, 0);
+    kthread_stop(blink_thread);
+    gpiod_set_value(led, 0);
+    gpiod_put(led);
+    pr_info("LED blink module unloaded\n");
 }
 
 module_init(my_init);
 module_exit(my_exit);
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Johannes 4Linux");
-MODULE_DESCRIPTION("An example for using GPIOs without the device tree");
