@@ -29,6 +29,7 @@ static int __init my_init(void)
 static void __exit my_exit(void)
 {
 	unregister_chrdev(major, "hello_cdev");
+	printk("bye_cdev - Mjor Device Number : %d\n", major);
 }
 
 module_init(my_init);
