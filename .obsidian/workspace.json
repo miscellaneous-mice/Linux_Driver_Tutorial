@@ -13,26 +13,29 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "00_notes/02_GPIO_Interfacing.md",
+                "file": "00_notes/03_Device_Files.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "02_GPIO_Interfacing"
+              "title": "03_Device_Files"
             }
           },
           {
             "id": "8332bdb85d75b2e9",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "References.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "References"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -180,13 +183,15 @@
       "bases:Create new base": false
     }
   },
-  "active": "8332bdb85d75b2e9",
+  "active": "a268b1f0a9f77c90",
   "lastOpenFiles": [
+    "References.md",
+    "00_notes/03_Device_Files.md",
+    "00_notes/00_Booting.md",
     "00_notes/02_GPIO_Interfacing.md",
     "00_notes/01_creating_a_driver.md",
     "00_notes/02_GPIO_Interfacing.txt",
     "00_notes/01_creating_a_driver.txt",
-    "00_notes/00_Booting.txt",
-    "00_notes/00_Booting.md"
+    "00_notes/00_Booting.txt"
   ]
 }
