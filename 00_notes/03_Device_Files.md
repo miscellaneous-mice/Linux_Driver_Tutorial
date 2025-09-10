@@ -102,3 +102,52 @@ $ sudo screen myserial 9600
 
 ## Creating a character device file
 
+- To register a new character device file we use `register_chrdev`
+	- param 1 : major device number
+		- When we put major device number as 64 here, then all the character devices with major device number 64 and minor device numbers from 0 to 256 will be controlled
+		- When we put major device number as 0, then by default kernel will look for a free device number and assign to it.
+	- param 2 : name of the character device file
+	- param 3 : Do include the struct which does file related operations
+```
+register_chrdev(0, "hello_cdev", &fops);
+```
+
+- Here `fops` is a struct defined with read capabilities, hence we can read the logs from  character device file using `cat` command
+```
+static ssize_t my_read(struct file *f, char __user *u, size_t l, loff_t *o)
+{
+	printk("hello_cdev - Read is called\n");
+	return 0;
+}
+
+
+static struct file_operations fops = {
+	.read = my_read
+};
+```
+
+
+- First compile the project and get the device number
+```
+**bash win 1**
+sudo dmesg -W 
+
+**bash win 2**
+make
+sudo insmod {filename}.ko -- Here get the free device number from bash win 1
+sudo rmmod {filename}
+```
+
+- Here we have to create the character device files
+```
+sudo mknod /dev/my_ch_dev c {dev_num} 0
+sudo mknod /dev/my_ch_dev0 c {dev_num} 1
+```
+
+- Then you can see the logs printing in `bash win 1`
+```
+sudo insmod {filename}.ko
+cat /dev/my_ch_dev
+cat /dev/my_ch_dev0
+sudo rmmod {filename}
+```
