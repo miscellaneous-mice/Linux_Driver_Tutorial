@@ -112,7 +112,7 @@ $ sudo screen myserial 9600
 register_chrdev(0, "hello_cdev", &fops);
 ```
 
-- Here `fops` is a struct defined with read capabilities, hence we can read the logs from  character device file using `cat` command
+- Here `fops` is a struct defined with read capabilities (see [linux repo](https://elixir.bootlin.com/linux)), hence we can read the logs from  character device file using `cat` command
 ```
 static ssize_t my_read(struct file *f, char __user *u, size_t l, loff_t *o)
 {
