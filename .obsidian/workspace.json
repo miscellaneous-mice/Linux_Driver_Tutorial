@@ -186,6 +186,11 @@
   },
   "active": "8332bdb85d75b2e9",
   "lastOpenFiles": [
+    "05_open_release/test.c",
+    "05_open_release/test",
+    "05_open_release/main.c",
+    "05_open_release/Makefile",
+    "05_open_release",
     "00_notes/03_Device_Files.md",
     "00_notes/04_Kernel_Logging.md",
     "00_notes/05_Open_Release.md",
@@ -198,7 +203,6 @@
     "03_Device_Files/ch_dev_file",
     "03_Device_Files",
     "00_notes/02_GPIO_Interfacing.txt",
-    "00_notes/01_creating_a_driver.txt",
-    "00_notes/00_Booting.txt"
+    "00_notes/01_creating_a_driver.txt"
   ]
 }

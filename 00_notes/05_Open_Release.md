@@ -12,10 +12,15 @@
 - Now when the device file is opened or closed we can check with which permissions it's open what's the major device number, minor device number we opened, etc.
 ```
 # bash 1 (To load the kernel modules and open/release the device files)
-sudo insmod {filename}.ko // Get the device number
-sudo mknod /dev/my_ch_dev c {dev_num} 0
 g++ test.c -o test
+
+sudo insmod {filename}.ko // Get the device number
+
+sudo mknod /dev/my_ch_dev c {dev_num} 0
+sudo mknod /dev/my_ch_dev10 c {dev_num} 10
+
 ./test /dev/my_ch_dev
+./test /dev/my_ch_dev10
 
 # bash 2 (To monitor the logs)
 sudo dmesg -WT
