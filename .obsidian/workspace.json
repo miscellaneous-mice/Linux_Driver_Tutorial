@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "00_notes/04_Kernel_Logging.md",
+                "file": "00_notes/03_Device_Files.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "04_Kernel_Logging"
+              "title": "03_Device_Files"
             }
           },
           {
@@ -27,15 +27,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "References.md",
+                "file": "00_notes/05_Open_Release.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "References"
+              "title": "05_Open_Release"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -183,10 +184,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "a268b1f0a9f77c90",
+  "active": "8332bdb85d75b2e9",
   "lastOpenFiles": [
     "00_notes/03_Device_Files.md",
     "00_notes/04_Kernel_Logging.md",
+    "00_notes/05_Open_Release.md",
+    "References.md",
     "00_notes/02_GPIO_Interfacing.md",
     "00_notes/01_creating_a_driver.md",
     "00_notes/00_Booting.md",
@@ -194,7 +197,6 @@
     "03_Device_Files/ch_dev_file/Makefile",
     "03_Device_Files/ch_dev_file",
     "03_Device_Files",
-    "References.md",
     "00_notes/02_GPIO_Interfacing.txt",
     "00_notes/01_creating_a_driver.txt",
     "00_notes/00_Booting.txt"
