@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "00_notes/05_Open_Release.md",
+                "file": "00_notes/08_spi_driver.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "05_Open_Release"
+              "title": "08_spi_driver"
             }
           }
         ],
@@ -186,6 +186,13 @@
   },
   "active": "8332bdb85d75b2e9",
   "lastOpenFiles": [
+    "07_highres_tmr/hr_timer.c",
+    "07_highres_tmr/Makefile",
+    "07_highres_tmr",
+    "00_notes/07_high_res_timer.md",
+    "00_notes/08_spi_driver.md",
+    "Untitled.md",
+    "00_notes/05_Open_Release.md",
     "05_open_release/test.c",
     "05_open_release/test",
     "05_open_release/main.c",
@@ -193,16 +200,12 @@
     "05_open_release",
     "00_notes/03_Device_Files.md",
     "00_notes/04_Kernel_Logging.md",
-    "00_notes/05_Open_Release.md",
     "References.md",
     "00_notes/02_GPIO_Interfacing.md",
     "00_notes/01_creating_a_driver.md",
     "00_notes/00_Booting.md",
     "03_Device_Files/ch_dev_file/main_ch_dev.c",
     "03_Device_Files/ch_dev_file/Makefile",
-    "03_Device_Files/ch_dev_file",
-    "03_Device_Files",
-    "00_notes/02_GPIO_Interfacing.txt",
-    "00_notes/01_creating_a_driver.txt"
+    "03_Device_Files/ch_dev_file"
   ]
 }
