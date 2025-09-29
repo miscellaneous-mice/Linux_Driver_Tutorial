@@ -21,158 +21,180 @@ gpioget gpiochip0 17
 ### **1. Module metadata**
 
 ```
-MODULE_LICENSE("GPL"); MODULE_AUTHOR("Johannes 4 GNU/Linux"); MODULE_DESCRIPTION("A simple LKM for a gpio interrupt");
+MODULE_LICENSE("GPL");  MODULE_AUTHOR("Johannes 4 GNU/Linux");  MODULE_DESCRIPTION("A simple LKM for a GPIO interrupt");
 ```
 
-- Kernel macros that describe the module.
+- Kernel macros that describe the module.    
 - `MODULE_LICENSE("GPL")` → ensures GPL compatibility, required for using some kernel symbols.
 - `MODULE_AUTHOR` and `MODULE_DESCRIPTION` → informational, shown in `modinfo`.
 
 ---
 
-### **2. Global variable**
+### **2. GPIO device struct**
 
 ```
-unsigned int irq_number;
+struct my_gpio_dev {
+	int pin;
+	char name[16];
+}; 
+
+static struct my_gpio_dev mydev = { .pin = 529, .name = "rpi-gpio-17" };
 ```
 
-- Holds the **IRQ number** that the kernel assigns to GPIO 529 (which corresponds to physical GPIO17 on your Pi).
-- Used later when requesting/freeing the interrupt.
+- Defines a struct to hold GPIO info (`pin` number and `name`).    
+- `mydev` → global instance for this GPIO pin.
 
 ---
 
-### **3. Interrupt handler**
+### **3. IRQ number and flag**
+
+```
+static unsigned int irq_number = 0; static bool irq_requested = false;
+```
+
+- `irq_number` → stores the IRQ number corresponding to GPIO 529.
+- `irq_requested` → tracks if the IRQ was successfully requested to avoid double free on exit.
+
+---
+
+### **4. Interrupt handler**
 
 ```
 static irqreturn_t gpio_irq_handler(int irq, void *dev_id) {
-	printk("gpio_irq: Interrupt was triggered and ISR was called!\n");
-	return IRQ_HANDLED;
+	struct my_gpio_dev *d = (struct my_gpio_dev *)dev_id;
+	printk(KERN_INFO "gpio_irq: Interrupt was triggered!\n");
+	printk(KERN_INFO "Interrupt from GPIO pin %d\n", d->pin);
+	return IRQ_HANDLED; 
 }
 ```
 
-- This is the **Interrupt Service Routine (ISR)**.
-- Triggered when the configured GPIO interrupt occurs (here: rising edge).
-- Prints a kernel log message and returns `IRQ_HANDLED` to tell the kernel the interrupt was processed.
+- ISR called when GPIO interrupt occurs (rising edge).
+- `dev_id` → pointer to our `my_gpio_dev` struct.    
+- Prints which GPIO triggered the interrupt.
+- Returns `IRQ_HANDLED` to tell kernel the interrupt was handled.
 
 ---
 
-### **4. Module init function**
+### **5. Module init function**
 
 ```
 static int __init ModuleInit(void) {
-	printk("qpio_irq: Loading module... ");
+	int ret;
+	printk(KERN_INFO "gpio_irq: Loading module... ");
 ```
 
-- Called when the module is loaded using `insmod`.
+- Called when module is loaded using `insmod`.
 - Logs that initialization has started.    
 
 ---
 
-#### **4.1 Requesting GPIO**
+#### **5.1 Request GPIO**
 
 ```
-    if(gpio_request(529, "rpi-gpio-17")) {
-		printk("Error!\nCan not allocate GPIO 17\n");
-		return -1;
+	ret = gpio_request(mydev.pin, mydev.name);
+	if (ret) {
+		printk(KERN_ERR "gpio_irq: Cannot allocate GPIO %d\n", mydev.pin);
+		return ret;
+}
+```
+
+- Requests exclusive access to GPIO 529.
+- Fails if another driver already uses it.
+
+---
+
+#### **5.2 Set GPIO as input**
+
+```
+	ret = gpio_direction_input(mydev.pin);
+	if (ret) {
+		printk(KERN_ERR "gpio_irq: Cannot set GPIO %d as input\n", mydev.pin);
+		gpio_free(mydev.pin);
+		return ret;
 	}
 ```
 
-- Asks the kernel for exclusive access to GPIO 529.
-    
-- If already used by another driver, it fails.
-    
+- Sets GPIO 529 as input (required for interrupt).
+- Frees the pin and exits on error.
 
 ---
 
-#### **4.2 Configuring as input**
+#### **5.3 Map GPIO → IRQ**
 
 ```
-    if(gpio_direction_input(529)) {
-		printk("Error!\nCan not set GPIO 17 to input!\n");
-		gpio_free(529);
-		return -1;
+	irq_number = gpio_to_irq(mydev.pin);
+	if (irq_number < 0) {
+		printk(KERN_ERR "gpio_irq: Cannot map GPIO %d to IRQ\n", mydev.pin);
+		gpio_free(mydev.pin);
+		return irq_number;
 	}
 ```
 
-- Sets GPIO 529 direction as **input** (needed for interrupts).
-- On error, frees the pin and exits.
+- Converts GPIO 529 into its IRQ number.
+- Returns negative on error.
 
 ---
 
-#### **4.3 Mapping GPIO → IRQ**
+#### **5.4 Request IRQ**
 
 ```
-    irq_number = gpio_to_irq(529);
-```
-
-- Converts GPIO 529 into its **IRQ number**.
-- This number is used by the interrupt controller.    
-
----
-
-#### **4.4 Requesting IRQ**
-
-```
-    if(request_irq(
-	    irq_number,
+	ret = request_irq(
+		irq_number,
 		gpio_irq_handler,
 		IRQF_TRIGGER_RISING,
 		"my_gpio_irq",
-		NULL
-	) != 0) {
-		printk("Error!\nCan not request interrupt nr.: %d\n", irq_number);
-		gpio_free(529);
-		return -1;
-	}
+		&mydev
+	);
+	if (ret) {
+		printk(KERN_ERR "gpio_irq: Cannot request IRQ %d\n", irq_number);
+		gpio_free(mydev.pin);
+		return ret;
+	} 
+	irq_requested = true;
 ```
 
-- Registers the interrupt with the kernel.
-- Parameters:
-    - `irq_number` → which interrupt line
-    - `gpio_irq_handler` → function to call
-    - `IRQF_TRIGGER_RISING` → trigger on rising edge
-    - `"my_gpio_irq"` → name shown in `/proc/interrupts`
-    - `NULL` → no custom device ID
-
-- If it fails, the GPIO is freed.
+- Registers interrupt with kernel. 
+- `&mydev` → passed as `dev_id` to ISR.
+- Sets `irq_requested` to true if successful, to safely free later.
 
 ---
 
-#### **4.5 Success message**
+#### **5.5 Success message**
+
 ```
-    printk("Done!\n");
-	printk("GPIO 17 is mapped to IRQ Nr.: %d\n", irq_number);
+	printk(KERN_INFO "gpio_irq: Module loaded successfully\n");
+	printk(KERN_INFO "GPIO %d is mapped to IRQ %d\n", mydev.pin, irq_number);
 	return 0;
-}
 ```
 
-- Prints success logs and exits with `0`.
+- Prints success messages and returns 0.
 
 ---
 
-### **5. Module exit function**
+### **6. Module exit function**
 
 ```
 static void __exit ModuleExit(void) {
-	pr_info("gpio_irq: Unloading module... ");
-	free_irq(irq_number, NULL);
-	gpio_free(529);
+	printk(KERN_INFO "gpio_irq: Unloading module... ");
+	if (irq_requested)
+		free_irq(irq_number, &mydev);
+	gpio_free(mydev.pin);
+	printk(KERN_INFO "gpio_irq: Module unloaded\n"); 
 }
 ```
 
-- Called when the module is removed (`rmmod`).
-- `free_irq` → releases the interrupt line.
-- `gpio_free` → releases GPIO 529 for reuse.
+- Called when module is removed with `rmmod`.
+- Frees IRQ **only if it was requested successfully**.
+- Frees GPIO pin for reuse.
+- Logs unloading message.
 
 ---
 
-### **6. Register init/exit**
+### **7. Register init/exit functions**
 
 ```
 module_init(ModuleInit);
 module_exit(ModuleExit);
 ```
 
-- Registers the entry (`ModuleInit`) and exit (`ModuleExit`) functions with the kernel.
-
----
+- Tells kernel which functions to call on module load and unload.
