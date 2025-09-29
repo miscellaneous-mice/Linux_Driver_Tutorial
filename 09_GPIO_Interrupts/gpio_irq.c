@@ -6,62 +6,93 @@
 /* Meta Information */
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Johannes 4 GNU/Linux");
-MODULE_DESCRIPTION("A simple LKM for a gpio interrupt");
+MODULE_DESCRIPTION("A simple LKM for a GPIO interrupt");
 
-/** variable contains pin number o interrupt controller to which GPIO 17 is mapped to */
-unsigned int irq_number;
+/* Struct to hold GPIO info */
+struct my_gpio_dev {
+    int pin;
+    char name[16];
+};
 
-/**
- * @brief Interrupt service routine is called, when interrupt is triggered
- */
+/* Global instance */
+static struct my_gpio_dev mydev = {
+    .pin = 529,
+    .name = "rpi-gpio-17"
+};
+
+static unsigned int irq_number = 0;
+static bool irq_requested = false;
+
+/* Interrupt service routine */
 static irqreturn_t gpio_irq_handler(int irq, void *dev_id)
 {
-	printk("gpio_irq: Interrupt was triggered and ISR was called!\n");
-	return IRQ_HANDLED;
+    struct my_gpio_dev *d = (struct my_gpio_dev *)dev_id;
+    printk(KERN_INFO "gpio_irq: Interrupt was triggered!\n");
+    printk(KERN_INFO "Interrupt from GPIO pin %d\n", d->pin);
+    return IRQ_HANDLED;
 }
 
-/**
- * @brief This function is called, when the module is loaded into the kernel
- */
-static int __init ModuleInit(void) {
-	printk("qpio_irq: Loading module... ");
+/* Module init */
+static int __init ModuleInit(void)
+{
+    int ret;
 
-	/* Setup the gpio */
-	if(gpio_request(529, "rpi-gpio-17")) {
-		printk("Error!\nCan not allocate GPIO 17\n");
-		return -1;
-	}
+    printk(KERN_INFO "gpio_irq: Loading module... ");
 
-	/* Set GPIO 17 direction */
-	if(gpio_direction_input(529)) {
-		printk("Error!\nCan not set GPIO 17 to input!\n");
-		gpio_free(529);
-		return -1;
-	}
+    /* Request GPIO */
+    ret = gpio_request(mydev.pin, mydev.name);
+    if (ret) {
+        printk(KERN_ERR "gpio_irq: Cannot allocate GPIO %d\n", mydev.pin);
+        return ret;
+    }
 
-	/* Setup the interrupt */
-	irq_number = gpio_to_irq(529);
+    /* Set GPIO direction */
+    ret = gpio_direction_input(mydev.pin);
+    if (ret) {
+        printk(KERN_ERR "gpio_irq: Cannot set GPIO %d as input\n", mydev.pin);
+        gpio_free(mydev.pin);
+        return ret;
+    }
 
-	if(request_irq(irq_number, gpio_irq_handler, IRQF_TRIGGER_RISING, "my_gpio_irq", NULL) != 0){
-		printk("Error!\nCan not request interrupt nr.: %d\n", irq_number);
-		gpio_free(529);
-		return -1;
-	}
+    /* Map GPIO to IRQ */
+    irq_number = gpio_to_irq(mydev.pin);
+    if (irq_number < 0) {
+        printk(KERN_ERR "gpio_irq: Cannot map GPIO %d to IRQ\n", mydev.pin);
+        gpio_free(mydev.pin);
+        return irq_number;
+    }
 
-	printk("Done!\n");
-	printk("GPIO 17 is mapped to IRQ Nr.: %d\n", irq_number);
-	return 0;
+    /* Request IRQ */
+    ret = request_irq(irq_number, gpio_irq_handler,
+                      IRQF_TRIGGER_RISING, "my_gpio_irq", &mydev);
+    if (ret) {
+        printk(KERN_ERR "gpio_irq: Cannot request IRQ %d\n", irq_number);
+        gpio_free(mydev.pin);
+        return ret;
+    }
+
+    irq_requested = true; /* mark successful request */
+
+    printk(KERN_INFO "gpio_irq: Module loaded successfully\n");
+    printk(KERN_INFO "GPIO %d is mapped to IRQ %d\n", mydev.pin, irq_number);
+
+    return 0;
 }
 
-/**
- * @brief This function is called, when the module is removed from the kernel
- */
-static void __exit ModuleExit(void) {
-	pr_info("gpio_irq: Unloading module... ");
-	free_irq(irq_number, NULL);
-	gpio_free(529);
+/* Module exit */
+static void __exit ModuleExit(void)
+{
+    printk(KERN_INFO "gpio_irq: Unloading module... ");
 
+    /* Free IRQ only if requested */
+    if (irq_requested)
+        free_irq(irq_number, &mydev);
+
+    gpio_free(mydev.pin);
+
+    printk(KERN_INFO "gpio_irq: Module unloaded\n");
 }
 
 module_init(ModuleInit);
 module_exit(ModuleExit);
+
