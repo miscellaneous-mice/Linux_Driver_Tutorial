@@ -1,5 +1,5 @@
 ```
-ssh pi@raspberrypi.local 
+ssh pi@raspberrypi.local/raspberrypi-remote.local
 ```
 
 ```

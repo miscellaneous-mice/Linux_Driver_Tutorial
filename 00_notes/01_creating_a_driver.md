@@ -16,11 +16,11 @@ Includes these header files :
 
 To load the module into linux system
 - create a makefile to compile code into a loadable module (.ko file)
-- Monitor logs -> sudo dmesg -W
-- Load the module -> sudo insmod {filename.ko}
-- Remove the module -> sudo rmmod {filename.ko}
-- To check whether driver is loaded -> lsmod | grep {modulename}
-- To check the description of the driver -> modinfo {filename.ko}
+- Monitor logs -> `sudo dmesg -W`
+- Load the module -> `sudo insmod {filename.ko}`
+- Remove the module -> `sudo rmmod {filename.ko}`
+- To check whether driver is loaded -> `lsmod | grep {modulename}`
+- To check the description of the driver -> `modinfo {filename.ko}`
 	- Inbuilt kernel modules have a intree flag as true (eg. modinfo industrialio)
-- To load a kernel module with all it's dependencies -> modprobe {modulename}
+- To load a kernel module with all it's dependencies -> `modprobe {modulename}`
 	- The kernel modules which are in /lib/modules can only be loaded using modprobe

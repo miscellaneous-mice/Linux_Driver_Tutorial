@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "00_notes/09_gpio_irq.md",
+                "file": "00_notes/00_Booting.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "09_gpio_irq"
+              "title": "00_Booting"
             }
           },
           {
@@ -50,7 +50,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -198,16 +198,25 @@
       "bases:Create new base": false
     }
   },
-  "active": "2ee734ab28b73658",
+  "active": "69caee892dfaeee1",
   "lastOpenFiles": [
+    "02_GPIO_Control/gpioctrl.h",
+    "00_notes/02_GPIO_Interfacing.md",
+    "00_notes/09_gpio_irq.md",
+    "00_notes/05_Open_Release.md",
+    "00_notes/bcm2711-peripherals.pdf",
+    "00_notes/04_Kernel_Logging.md",
+    "00_notes/03_Device_Files.md",
+    "00_notes/01_creating_a_driver.md",
+    "00_notes/00_Booting.md",
+    "References.md",
+    "00_notes/08_spi_driver.md",
+    "00_notes/07_high_res_timer.md",
+    "00_notes/06_Read_Write_Chdev.md",
+    "00_notes/05_Open_Release_Chdev.md",
     "09_GPIO_Interrupts/gpio_irq.c",
     "09_GPIO_Interrupts/Makefile",
     "09_GPIO_Interrupts",
-    "00_notes/08_spi_driver.md",
-    "00_notes/09_gpio_irq.md",
-    "00_notes/03_Device_Files.md",
-    "00_notes/01_creating_a_driver.md",
-    "00_notes/02_GPIO_Interfacing.md",
     "09_GPIO_Interrupt",
     "021_SPI_Introduction.png",
     "08_lkm_spi_driver/spi_driver.c",
@@ -224,13 +233,6 @@
     "00_notes/_images/022_SPI_components.png",
     "00_notes/_images",
     "07_highres_tmr/hr_timer.c",
-    "07_highres_tmr/Makefile",
-    "07_highres_tmr",
-    "00_notes/07_high_res_timer.md",
-    "Untitled.md",
-    "00_notes/05_Open_Release.md",
-    "00_notes/04_Kernel_Logging.md",
-    "References.md",
-    "00_notes/00_Booting.md"
+    "Untitled.md"
   ]
 }
