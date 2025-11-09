@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "00_notes/03_Device_Files.md",
+                "file": "00_notes/02_GPIO_Interfacing.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "03_Device_Files"
+              "title": "02_GPIO_Interfacing"
             }
           }
         ],
@@ -200,13 +200,14 @@
   },
   "active": "69caee892dfaeee1",
   "lastOpenFiles": [
+    "00_notes/_images/Screenshot 2025-11-10 at 12.31.44 AM.png",
+    "00_notes/03_Device_Files.md",
     "02_GPIO_Control/gpioctrl.h",
     "00_notes/02_GPIO_Interfacing.md",
     "00_notes/09_gpio_irq.md",
     "00_notes/05_Open_Release.md",
     "00_notes/bcm2711-peripherals.pdf",
     "00_notes/04_Kernel_Logging.md",
-    "00_notes/03_Device_Files.md",
     "00_notes/01_creating_a_driver.md",
     "00_notes/00_Booting.md",
     "References.md",
@@ -232,7 +233,6 @@
     "00_notes/_images/023_SPI_Overview.png",
     "00_notes/_images/022_SPI_components.png",
     "00_notes/_images",
-    "07_highres_tmr/hr_timer.c",
     "Untitled.md"
   ]
 }
